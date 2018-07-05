@@ -7,30 +7,30 @@ import idc
 
 class MyHandler(idaapi.action_handler_t):
     @classmethod
-    def get_name(self):
-        return self.__name__
+    def get_name(cls):
+        return cls.__name__
         
     @classmethod
-    def get_label(self):
-        return self.label
+    def get_label(cls):
+        return cls.label
         
     @classmethod
-    def register(self, plugin, label):
-        self.plugin = plugin
-        self.label = label
-        instance = self()
+    def register(cls, plugin, label):
+        cls.plugin = plugin
+        cls.label = label
+        instance = cls()
         return idaapi.register_action(idaapi.action_desc_t(
-            self.get_name(),  # Name. Acts as an ID. Must be unique.
+            cls.get_name(),  # Name. Acts as an ID. Must be unique.
             instance.get_label(),  # Label. That's what users see.
             instance  # Handler. Called when activated, and for updating
         ))
 
     @classmethod
-    def unregister(self):
+    def unregister(cls):
         """Unregister the action.
         After unregistering the class cannot be used.
         """
-        idaapi.unregister_action(self.get_name())
+        idaapi.unregister_action(cls.get_name())
 
     def activate(self, ctx):
         sel = idaapi.read_selection()
