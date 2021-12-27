@@ -41,7 +41,7 @@ class MyHandler(idaapi.action_handler_t):
         import capstone
         md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_64)
         md.details = True
-        data = idaapi.get_many_bytes(start, end - start)
+        data = idaapi.get_bytes(start, end - start)
         for insn in md.disasm(data, start):
             # print "0x%x:\t%s\t%s" % (insn.address, insn.mnemonic, insn.op_str)
             idaapi.set_cmt(insn.address, str('%s %s' % (insn.mnemonic, insn.op_str)), False)
