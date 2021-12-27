@@ -33,16 +33,16 @@ class MyHandler(idaapi.action_handler_t):
         idaapi.unregister_action(cls.get_name())
 
     def activate(self, ctx):
-        sel = idaapi.read_selection()
-        if not sel[0]:
+        start, end = idc.read_selection_start(), idc.read_selection_end()
+        if start == idaapi.BADADDR:
             print 'Please select something'
             return
 
         import capstone
         md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_64)
         md.details = True
-        data = idaapi.get_many_bytes(sel[1], sel[2] - sel[1])
-        for insn in md.disasm(data, sel[1]):
+        data = idaapi.get_many_bytes(start, end - start)
+        for insn in md.disasm(data, start):
             # print "0x%x:\t%s\t%s" % (insn.address, insn.mnemonic, insn.op_str)
             idaapi.set_cmt(insn.address, str('%s %s' % (insn.mnemonic, insn.op_str)), False)
 
@@ -51,8 +51,8 @@ class MyHandler(idaapi.action_handler_t):
 
 
 class Hooks(idaapi.UI_Hooks):
-    def finish_populating_tform_popup(self, form, popup):
-        tft = idaapi.get_tform_type(form)
+    def finish_populating_widget_popup(self, form, popup):
+        tft = idaapi.get_widget_type(form)
 
         if tft == idaapi.BWN_DISASM:
             # Define a silly handler.
